@@ -1,26 +1,41 @@
 {
-  "name": "express-server-template",
+  "name": "lead-studio-express-server",
   "version": "1.0.0",
-  "description": "Express API Server Template - Ready-to-use Express server with TypeScript",
+  "description": "Lead Studio OSS — Express API for lead-studio-web",
   "main": "index.ts",
   "scripts": {
     "start": "ts-node index.ts",
     "dev": "nodemon --exec ts-node index.ts",
     "build": "tsc",
-    "build:watch": "tsc --watch"
+    "build:watch": "tsc --watch",
+    "postinstall": "playwright install --with-deps chromium",
+    "playwright:install": "playwright install --with-deps chromium"
   },
   "dependencies": {
-    "express": "^4.18.2",
+    "@anthropic-ai/sdk": "^0.71.2",
+    "@supabase/supabase-js": "^2.39.0",
     "cors": "^2.8.5",
-    "dotenv": "^16.3.1"
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "googleapis": "^144.0.0",
+    "luxon": "^3.4.4",
+    "multer": "^2.0.2",
+    "openai": "^4.20.0",
+    "pg": "^8.13.1",
+    "playwright": "^1.49.0",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
+    "@types/luxon": "^3.4.2",
+    "@types/multer": "^2.0.0",
     "@types/node": "^20.0.0",
-    "typescript": "^5.0.0",
+    "@types/pg": "^8.11.10",
+    "@types/uuid": "^9.0.0",
+    "nodemon": "^3.0.0",
     "ts-node": "^10.9.0",
-    "nodemon": "^3.0.0"
+    "typescript": "^5.0.0"
   },
   "engines": {
     "node": ">=20.0.0"

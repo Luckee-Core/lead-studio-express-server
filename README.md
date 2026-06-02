@@ -1,152 +1,46 @@
-# Express Server Template
+# Lead Studio Express Server
 
-A production-ready Express API server template with TypeScript, perfect for quickly spinning up new backend services.
+Express API for [lead-studio-web-open-source](https://github.com/lead-open-source/lead-studio-web-open-source). Ported from the lead surface of `mentorai-server` (Luckee-only extras such as residential leads, lead digest, services studio, and user background studio are **not** included).
 
-## Features
+## Quick start
 
-- ✅ **TypeScript** - Full type safety and modern JS features
-- ✅ **Express.js** - Fast, minimalist web framework
-- ✅ **CORS** - Configured for cross-origin requests
-- ✅ **Hot Reload** - Nodemon for development
-- ✅ **Health Checks** - Built-in health endpoints
-- ✅ **Error Handling** - Centralized error middleware
-- ✅ **Clean Structure** - Organized, scalable file structure
-
-## Quick Start
-
-### 1. Create a New Project from This Template
-
-**Using GitHub CLI:**
 ```bash
-gh repo create my-new-api --template trouthouse-tech/express-server-template --private --clone
-cd my-new-api
-```
+cp .env.example .env
+# Fill SUPABASE_URL, SUPABASE_SERVICE_KEY, ANTHROPIC_API_KEY, etc.
 
-**Using degit:**
-```bash
-npx degit trouthouse-tech/express-server-template my-new-api
-cd my-new-api
-git init
-```
-
-### 2. Install Dependencies
-```bash
 npm install
-```
-
-### 3. Run Development Server
-```bash
 npm run dev
 ```
 
-Server will start on `http://localhost:3000`
+Default port: **3005** (matches OSS web `NEXT_PUBLIC_SERVER_URL` dev default).
 
-### 4. Test It
-```bash
-curl http://localhost:3000
-# {"status":"ok","message":"TroutHouseTech Express Server is running",...}
-```
-
-## Available Endpoints
-
-- `GET /` - Health check
-- `GET /api/health` - Health check with detailed info
-
-## Project Structure
-
-```
-express-server-template/
-├── index.ts                 # Main entry point
-├── src/
-│   └── services/
-│       ├── middleware/      # Express middleware
-│       │   ├── setup-early-middleware.ts
-│       │   ├── setup-error-handling.ts
-│       │   └── index.ts
-│       ├── health/          # Health check routes
-│       │   ├── create-health-router.ts
-│       │   └── index.ts
-│       └── server/          # Server startup logic
-│           ├── start-server.ts
-│           └── index.ts
-├── package.json
-├── tsconfig.json
-└── .gitignore
-```
-
-## Environment Variables
-
-Create a `.env` file in the root directory:
+Point the web app at this server:
 
 ```env
-PORT=3000
-NODE_ENV=development
+NEXT_PUBLIC_SERVER_URL=http://localhost:3005
 ```
 
-## Scripts
+## Mounted routes
 
-- `npm run dev` - Start development server with hot reload
-- `npm start` - Start production server
-- `npm run build` - Compile TypeScript to JavaScript
-- `npm run build:watch` - Watch mode compilation
+| Prefix | Purpose |
+|--------|---------|
+| `GET /`, `GET /api/health` | Health |
+| `/api/data/*` | Lead CRM CRUD (leads, contacts, categories, email queue, scrape runs, call log, costs, saved filters, commercial research queue, …) |
+| `/api/services/*` | Lead research workers (Google search, website crawl, Facebook, auto-categorize, …) |
+| `/api/lead-contact-chat/*` | Contact chat drafts |
+| `/api/gmail-oauth/*` | Gmail send pipeline |
+| `/api/email/*`, `/api/webhooks/*`, `/api/cron/*` | Outbound email + SendGrid/Gmail hooks |
+| `/api/scrapers/facebook-*` | Facebook admin scrapers |
 
-## Adding New Routes
+## Architecture
 
-1. Create a new router in `src/services/`:
+See [`.cursor/architecture/README.md`](.cursor/architecture/README.md) for ADRs (router factories, data layer, managed clients, edge-function boundaries).
 
-```typescript
-// src/services/my-feature/create-my-router.ts
-import { Router, Request, Response } from 'express';
+## Verification
 
-export const createMyRouter = (): Router => {
-  const router = Router();
-  
-  router.get('/', (req: Request, res: Response) => {
-    res.json({ message: 'My feature works!' });
-  });
-  
-  return router;
-};
-```
-
-2. Export it in `src/services/my-feature/index.ts`:
-
-```typescript
-export { createMyRouter } from './create-my-router';
-```
-
-3. Mount it in `index.ts`:
-
-```typescript
-import { createMyRouter } from './src/services/my-feature';
-app.use('/api/my-feature', createMyRouter());
-```
-
-## Deployment
-
-### Build for Production
 ```bash
 npm run build
+curl http://localhost:3005/api/health
 ```
 
-### Run Production Build
-```bash
-NODE_ENV=production node dist/index.js
-```
-
-## Architecture Principles
-
-This template follows these conventions:
-- **One function per file** - Each file contains a single, focused function
-- **Factory pattern** - Routers are created via factory functions
-- **Index exports** - Every folder has an `index.ts` for clean imports
-- **Type safety** - Explicit types for all functions and routes
-- **Middleware separation** - Early middleware vs error handling
-
-## License
-
-MIT
-
-## Author
-
-TroutHouseTech
+Smoke with OSS web: leads list, find leads (maps scrape), lead detail research actions, email queue, commercial research queue, saved filter presets.
