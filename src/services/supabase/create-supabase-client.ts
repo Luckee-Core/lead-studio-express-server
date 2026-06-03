@@ -24,7 +24,9 @@ export const getManagedSupabaseClient = (): SupabaseClient | null => {
     return null;
   }
 
-  managedClient = createClient(supabaseUrl, supabaseKey);
+  managedClient = createClient(supabaseUrl, supabaseKey, {
+    auth: { persistSession: false, autoRefreshToken: false },
+  });
   return managedClient;
 };
 
@@ -43,7 +45,9 @@ export const createManagedSupabaseClient = (): SupabaseClient => {
  * Create BYOK Supabase client (user's own instance)
  */
 export const createBYOKSupabaseClient = (credentials: SupabaseCredentials): SupabaseClient => {
-  return createClient(credentials.url, credentials.key);
+  return createClient(credentials.url, credentials.key, {
+    auth: { persistSession: false, autoRefreshToken: false },
+  });
 };
 
 /**
@@ -78,4 +82,3 @@ export const attachSupabaseClient = (req: Request, res: any, next: any) => {
     });
   }
 };
-

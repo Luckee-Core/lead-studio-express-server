@@ -12,12 +12,12 @@ npm install
 npm run dev
 ```
 
-Default port: **3005** (matches OSS web `NEXT_PUBLIC_SERVER_URL` dev default).
+Default port: **3032** (matches OSS web `NEXT_PUBLIC_SERVER_URL` dev default).
 
 Point the web app at this server:
 
 ```env
-NEXT_PUBLIC_SERVER_URL=http://localhost:3005
+NEXT_PUBLIC_SERVER_URL=http://localhost:3032
 ```
 
 ## Mounted routes
@@ -40,7 +40,7 @@ See [`.cursor/architecture/README.md`](.cursor/architecture/README.md) for ADRs 
 
 ```bash
 npm run build
-curl http://localhost:3005/api/health
+curl http://localhost:3032/api/health
 ```
 
 Smoke with OSS web: leads list, find leads (maps scrape), lead detail research actions, email queue, commercial research queue, saved filter presets.

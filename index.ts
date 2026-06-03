@@ -5,7 +5,7 @@ dotenv.config();
 dotenv.config({ path: '.env.local' });
 
 const app = express();
-const PORT = Number(process.env.PORT) || 3005;
+const PORT = Number(process.env.PORT) || 3032;
 
 import { setupEarlyMiddleware } from './src/services/middleware';
 setupEarlyMiddleware(app);
