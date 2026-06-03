@@ -12,6 +12,7 @@ import { getAttachmentsByEmailId } from '../../../data/lead-contact-email-attach
 import { resolveSendAsForLeadContactSend } from '../../../utils/email/resolve-send-as-for-lead-contact-send';
 import { generateCustomEmail } from '../../email-generation';
 import { sendLeadEmail } from '../../email/send-lead-email';
+import { createOpenTrackingTokenForSend } from '../../email/open-tracking';
 import { downloadEmailAttachment } from '../../storage';
 import { getMimeType } from './get-mime-type';
 
@@ -72,6 +73,8 @@ export const processCustomEmailQueueItem = async (
     })
   );
 
+  const openTrackingToken = createOpenTrackingTokenForSend();
+
   const sgMessageId = await sendLeadEmail({
     to: contact.email,
     subject: emailResult.subject,
@@ -80,6 +83,7 @@ export const processCustomEmailQueueItem = async (
     fromEmail: resolvedSendAs.sendAsEmail,
     gmailUserEmail: resolvedSendAs.sendAsEmail,
     attachments: sgAttachments.length > 0 ? sgAttachments : undefined,
+    openTrackingToken,
   });
 
   await createLeadSentEmail(supabase, {
@@ -94,6 +98,7 @@ export const processCustomEmailQueueItem = async (
     from_email: resolvedSendAs.sendAsEmail,
     email_sending_identity_id: resolvedSendAs.emailSendingIdentityId,
     sg_message_id: sgMessageId,
+    open_tracking_token: openTrackingToken,
   });
 
   if (contact.status === 'not_contacted') {

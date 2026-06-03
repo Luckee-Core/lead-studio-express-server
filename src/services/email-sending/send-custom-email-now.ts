@@ -10,6 +10,7 @@ import { createLeadSentEmail } from '../../data/lead-sent-emails';
 import { getAttachmentsByEmailId } from '../../data/lead-contact-email-attachments';
 import { generateCustomEmail } from '../email-generation';
 import { sendLeadEmail } from '../email/send-lead-email';
+import { createOpenTrackingTokenForSend } from '../email/open-tracking';
 import { downloadEmailAttachment } from '../storage';
 import { getMimeType } from '../lead-contact-email-queue/custom-email/get-mime-type';
 import { resolveSendAsForLeadContactSend } from '../../utils/email/resolve-send-as-for-lead-contact-send';
@@ -80,6 +81,8 @@ export const sendCustomEmailNow = async (
     })
   );
 
+  const openTrackingToken = createOpenTrackingTokenForSend();
+
   const sgMessageId = await sendLeadEmail({
     to: contact.email,
     subject: emailResult.subject,
@@ -88,6 +91,7 @@ export const sendCustomEmailNow = async (
     fromEmail: resolvedSendAs.sendAsEmail,
     gmailUserEmail: resolvedSendAs.sendAsEmail,
     attachments: sgAttachments.length > 0 ? sgAttachments : undefined,
+    openTrackingToken,
   });
 
   console.log(`💾 Creating lead_sent_email record with sg_message_id: ${sgMessageId}`);
@@ -104,6 +108,7 @@ export const sendCustomEmailNow = async (
     from_email: resolvedSendAs.sendAsEmail,
     email_sending_identity_id: resolvedSendAs.emailSendingIdentityId,
     sg_message_id: sgMessageId,
+    open_tracking_token: openTrackingToken,
   });
 
   console.log(`✅ Created lead_sent_email record: ${sentEmail.id}, sg_message_id in DB: ${sentEmail.sg_message_id}`);

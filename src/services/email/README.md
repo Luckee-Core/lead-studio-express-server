@@ -42,8 +42,19 @@ Optional (fallbacks for from address / name):
 4. **Env**: Optional `GMAIL_PUBSUB_TOPIC` (default `projects/tht-web-e2134/topics/gmail-push`).
 5. Call `POST /api/cron/renew-gmail-watch` once to start the watch, then schedule it daily.
 
-- The **SendGrid webhook** (`POST /api/webhooks/webhook`) is still mounted for backwards compatibility.
+- The **SendGrid webhook** (`POST /api/webhooks/webhook`) can still update `opened_at` for legacy SendGrid sends. **Gmail API sends do not use SendGrid** — open tracking for those uses the pixel below.
 
-## Open tracking pixel
+## Open tracking pixel (Gmail sends)
 
-Set `EMAIL_OPEN_TRACKING_BASE_URL` to your server’s public URL (e.g. `https://tht-express-server-production.up.railway.app`). Lead emails then include a 1x1 tracking image; when the recipient opens the email, the client requests `GET {baseUrl}/api/email/open?t=<token>`, the server records the open and redirects to the THT logo. Run `sql/lead_sent_emails_open_tracking_token.sql` in Supabase to add the `open_tracking_token` column.
+1. Run `sql/lead_sent_emails_open_tracking_token.sql` in Supabase (adds `open_tracking_token` + unique index).
+2. Set `EMAIL_OPEN_TRACKING_BASE_URL` to this server’s **public HTTPS** URL (e.g. Railway URL or an ngrok tunnel in dev). Must be reachable by the recipient’s mail client — not `http://localhost` unless you tunnel.
+3. On each send (send-now, queue, bulk, legacy `/send`), when the base URL is set, express generates a token, stores it on `lead_sent_emails`, and appends a 1×1 `<img>` to the HTML part of the MIME message.
+4. When the email is opened, the client requests `GET {baseUrl}/api/email/open?t=<token>`. The handler updates `opened_at`, `opened_count`, and `delivery_status: opened` (unless bounced), and on the **first** open inserts a `lead_contact_opened` activity.
+5. Response: transparent **GIF** by default. Set `EMAIL_OPEN_TRACKING_REDIRECT_URL` to return a 302 redirect instead (e.g. a logo URL).
+
+Verify:
+
+```bash
+# After sending a lead email with tracking enabled, copy token from DB or HTML source
+curl -sI "https://your-host/api/email/open?t=TOKEN"
+```

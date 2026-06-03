@@ -7,6 +7,7 @@ import { SupabaseClient } from '@supabase/supabase-js';
 import { getLeadContactsByIds } from '../lead-contacts';
 import { createLeadSentEmail } from '../lead-sent-emails';
 import { sendLeadEmail } from '../../services/email/send-lead-email';
+import { createOpenTrackingTokenForSend } from '../../services/email/open-tracking';
 import { updateLead } from '../leads';
 import type { TiptapContent } from './tiptap-types';
 
@@ -57,11 +58,14 @@ export const sendBulkLeadContactEmails = async (
         continue;
       }
 
+      const openTrackingToken = createOpenTrackingTokenForSend();
+
       const sgMessageId = await sendLeadEmail({
         to: contact.email,
         subject,
         body,
         fromName,
+        openTrackingToken,
       });
 
       await createLeadSentEmail(supabase, {
@@ -71,6 +75,7 @@ export const sendBulkLeadContactEmails = async (
         from_name: fromName,
         variation_id: variationId,
         sg_message_id: sgMessageId,
+        open_tracking_token: openTrackingToken,
       });
 
       // Update lead status to 'contacted' if currently 'not_contacted'

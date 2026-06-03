@@ -4,10 +4,17 @@
 
 import { Router, Request, Response } from 'express';
 import { sendTestEmail } from './send-test-email';
+import { openTrackingHandler } from './routes/open-tracking-handler';
 import { verifyCronSecret } from '../lead-research-shared';
 
 export const createEmailRouter = (): Router => {
   const router = Router();
+
+  /**
+   * GET /open
+   * Open-tracking pixel. Query: t (open_tracking_token). Returns 1×1 GIF or redirects when EMAIL_OPEN_TRACKING_REDIRECT_URL is set.
+   */
+  router.get('/open', openTrackingHandler);
 
   /**
    * POST /test

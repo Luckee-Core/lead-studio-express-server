@@ -17,6 +17,7 @@ import { generateCampaignVariationEmail } from '../../services/email-generation'
 import { sendCustomEmailNow } from '../../services/email-sending';
 import { createLeadSentEmail } from '../lead-sent-emails';
 import { sendLeadEmail } from '../../services/email/send-lead-email';
+import { createOpenTrackingTokenForSend } from '../../services/email/open-tracking';
 import { getLeadContactById } from '../lead-contacts';
 import { updateLead } from '../leads';
 
@@ -132,11 +133,14 @@ export const createLeadContactEmailsRouter = (): Router => {
       }
       const supabase = getSupabaseClient();
 
+      const openTrackingToken = createOpenTrackingTokenForSend();
+
       const sgMessageId = await sendLeadEmail({
         to,
         subject,
         body,
         fromName,
+        openTrackingToken,
       });
 
       await createLeadSentEmail(supabase, {
@@ -146,6 +150,7 @@ export const createLeadContactEmailsRouter = (): Router => {
         from_name: fromName,
         variation_id: variationId,
         sg_message_id: sgMessageId,
+        open_tracking_token: openTrackingToken,
       });
 
       // Update lead status to 'contacted' if currently 'not_contacted'

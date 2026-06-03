@@ -8,6 +8,8 @@ export { createLeadSentEmailsRouter } from './router';
 export { createLeadSentEmail } from './create';
 export type { CreateLeadSentEmailInput } from './create';
 export { findLeadSentEmailBySgMessageId } from './find-by-sg-message-id';
+export { findLeadSentEmailByOpenTrackingToken } from './find-by-open-tracking-token';
+export type { LeadSentEmailByOpenTokenRecord } from './find-by-open-tracking-token';
 export { updateLeadSentEmailBySgMessageId } from './update-by-sg-message-id';
 export { getRecentSentLeadEmailsWithPlainBodies } from './get-recent-with-plain-bodies';
 export type { RecentSentEmailPlain } from './get-recent-with-plain-bodies';

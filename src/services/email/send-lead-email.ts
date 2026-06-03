@@ -10,6 +10,7 @@ import type { TiptapContent } from '../../data/lead-contact-emails/tiptap-types'
 import { tiptapToPlainText } from '../../data/lead-contact-emails/tiptap-to-plain-text';
 import { tiptapToHtml } from '../../data/lead-contact-emails/tiptap-to-html';
 import { getGmailClient, buildMimeMessage } from './gmail';
+import { appendOpenTrackingPixel } from './open-tracking';
 
 export type SendLeadEmailAttachment = {
   content: string;
@@ -36,6 +37,8 @@ export type SendLeadEmailParams = {
   /** Gmail API impersonation (JWT subject); should match the mailbox in the MIME From when using Workspace delegation. */
   gmailUserEmail?: string;
   attachments?: SendLeadEmailAttachment[];
+  /** When set with EMAIL_OPEN_TRACKING_BASE_URL, appends a 1×1 open-tracking pixel to HTML. */
+  openTrackingToken?: string | null;
 };
 
 /**
@@ -58,10 +61,14 @@ export const sendLeadEmail = async (params: SendLeadEmailParams): Promise<string
     fromEmail = process.env.GMAIL_SEND_AS_EMAIL || process.env.SENDGRID_FROM_EMAIL || 'matt@trouthousetech.com',
     gmailUserEmail,
     attachments = [],
+    openTrackingToken,
   } = params;
 
   const plain = tiptapToPlainText(body as TiptapContent);
-  const html = tiptapToHtml(body as TiptapContent);
+  const html = appendOpenTrackingPixel(
+    tiptapToHtml(body as TiptapContent),
+    openTrackingToken
+  );
 
   console.log(`📧 Sending email to: ${to}, subject: "${subject}", attachments: ${attachments.length}`);
 
