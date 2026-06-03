@@ -1,31 +1,24 @@
 /**
- * Email Router
- * Provides endpoints for email functionality
+ * Email Router — service-account test send (CRON_SECRET when set).
  */
 
 import { Router, Request, Response } from 'express';
-import { sendTestEmailAsOAuthUser, GMAIL_NOT_CONNECTED_CODE } from './send-test-email';
-import { getSupabaseUserFromRequest } from '../../utils/auth';
-
-type SupabaseRequest = Request & { supabase: any };
+import { sendTestEmail } from './send-test-email';
+import { verifyCronSecret } from '../lead-research-shared';
 
 export const createEmailRouter = (): Router => {
   const router = Router();
 
   /**
    * POST /test
-   * Send a test email from the authenticated user's connected Gmail (OAuth only).
-   * Request body: { to: string, subject?: string, message?: string }
+   * Send a test email via Workspace service account.
+   * Body: { to: string, subject?: string, message?: string }
+   * Auth: Bearer CRON_SECRET or x-cron-secret when CRON_SECRET is set.
    */
   router.post('/test', async (req: Request, res: Response): Promise<void> => {
     try {
-      const user = await getSupabaseUserFromRequest(req);
-      if (!user?.id) {
-        res.status(401).json({
-          success: false,
-          error: 'Not authenticated',
-          message: 'Sign in required to send email',
-        });
+      if (!verifyCronSecret(req)) {
+        res.status(401).json({ success: false, error: 'Unauthorized' });
         return;
       }
 
@@ -35,7 +28,6 @@ export const createEmailRouter = (): Router => {
         res.status(400).json({
           success: false,
           error: 'Missing required field: to',
-          message: 'Please provide an email address in the "to" field',
         });
         return;
       }
@@ -45,46 +37,21 @@ export const createEmailRouter = (): Router => {
         res.status(400).json({
           success: false,
           error: 'Invalid email format',
-          message: 'Please provide a valid email address',
         });
         return;
       }
 
-      const supabase = (req as SupabaseRequest).supabase;
-
-      await sendTestEmailAsOAuthUser({
-        supabase,
-        userId: user.id,
-        to,
-        subject,
-        message,
-      });
+      await sendTestEmail({ to, subject, message });
 
       res.status(200).json({
         success: true,
         message: 'Test email sent successfully',
-        data: {
-          to,
-          subject: subject || 'Test email (Luckee)',
-        },
+        data: { to, subject: subject || 'Test Email (Lead Studio)' },
       });
     } catch (error: unknown) {
-      console.error('Error in POST /api/email/test:', error);
-
-      if (error instanceof Error && (error as Error & { code?: string }).code === GMAIL_NOT_CONNECTED_CODE) {
-        res.status(400).json({
-          success: false,
-          error: GMAIL_NOT_CONNECTED_CODE,
-          message: 'Connect Gmail in Settings before sending email',
-        });
-        return;
-      }
-
-      let errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
-      const err = error as { code?: number; response?: { status?: number } };
-      const statusCode = err?.code === 401 ? 401 : err?.response?.status ?? 500;
-
-      res.status(statusCode).json({
+      console.error('❌ Error in POST /api/email/test:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      res.status(500).json({
         success: false,
         error: errorMessage,
         message: 'Failed to send test email',

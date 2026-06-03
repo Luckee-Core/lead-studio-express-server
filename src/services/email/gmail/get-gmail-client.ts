@@ -3,15 +3,24 @@
  * Requires Google Workspace: admin must grant the service account access to impersonate
  * the user specified by GMAIL_SEND_AS_EMAIL.
  *
- * Credentials: GMAIL_SERVICE_ACCOUNT_JSON_BASE64 (recommended) or GMAIL_SERVICE_ACCOUNT_JSON only.
+ * Credentials (first match wins):
+ * 1. GMAIL_SERVICE_ACCOUNT_JSON_PATH — path to the downloaded .json key file (local dev)
+ * 2. GMAIL_SERVICE_ACCOUNT_JSON — minified JSON string
+ * 3. GMAIL_SERVICE_ACCOUNT_JSON_BASE64 — base64-encoded JSON (Railway / hosted)
  */
 
+import fs from 'fs';
+import path from 'path';
 import { google, type gmail_v1 } from 'googleapis';
 import type { JWTInput } from 'google-auth-library';
 
 const GMAIL_SEND_SCOPE = 'https://www.googleapis.com/auth/gmail.send';
 const GMAIL_READONLY_SCOPE = 'https://www.googleapis.com/auth/gmail.readonly';
 
+/**
+ * @param raw - JSON string
+ * @param label - Env var name for error messages
+ */
 function parseJsonCredentials(raw: string, label: string): JWTInput {
   try {
     return JSON.parse(raw) as JWTInput;
@@ -20,19 +29,36 @@ function parseJsonCredentials(raw: string, label: string): JWTInput {
   }
 }
 
+/**
+ * Load service account key from env or file.
+ */
 function getServiceAccountCredentials(): JWTInput {
-  const b64 = process.env.GMAIL_SERVICE_ACCOUNT_JSON_BASE64?.trim();
-  const raw = process.env.GMAIL_SERVICE_ACCOUNT_JSON?.trim();
-
-  if (b64) {
-    const decoded = Buffer.from(b64, 'base64').toString('utf8');
-    return parseJsonCredentials(decoded, 'GMAIL_SERVICE_ACCOUNT_JSON_BASE64');
+  const jsonPath = process.env.GMAIL_SERVICE_ACCOUNT_JSON_PATH?.trim();
+  if (jsonPath) {
+    const resolved = path.isAbsolute(jsonPath)
+      ? jsonPath
+      : path.resolve(process.cwd(), jsonPath);
+    if (!fs.existsSync(resolved)) {
+      throw new Error(`GMAIL_SERVICE_ACCOUNT_JSON_PATH file not found: ${resolved}`);
+    }
+    const fileContents = fs.readFileSync(resolved, 'utf8');
+    return parseJsonCredentials(fileContents, 'GMAIL_SERVICE_ACCOUNT_JSON_PATH');
   }
+
+  const raw = process.env.GMAIL_SERVICE_ACCOUNT_JSON?.trim();
   if (raw) {
     return parseJsonCredentials(raw, 'GMAIL_SERVICE_ACCOUNT_JSON');
   }
+
+  const b64 = process.env.GMAIL_SERVICE_ACCOUNT_JSON_BASE64?.trim();
+  if (b64) {
+    // Common mistake: paste raw JSON into the base64 var
+    const jsonText = b64.startsWith('{') ? b64 : Buffer.from(b64, 'base64').toString('utf8');
+    return parseJsonCredentials(jsonText, 'GMAIL_SERVICE_ACCOUNT_JSON_BASE64');
+  }
+
   throw new Error(
-    'Set GMAIL_SERVICE_ACCOUNT_JSON_BASE64 (recommended on Railway) or GMAIL_SERVICE_ACCOUNT_JSON'
+    'Set GMAIL_SERVICE_ACCOUNT_JSON_PATH (path to .json file), GMAIL_SERVICE_ACCOUNT_JSON (one-line JSON), or GMAIL_SERVICE_ACCOUNT_JSON_BASE64'
   );
 }
 

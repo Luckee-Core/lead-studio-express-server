@@ -6,8 +6,9 @@ Outbound email is sent via **Gmail API** using a Google Cloud service account wi
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `GMAIL_SERVICE_ACCOUNT_JSON_BASE64` | One of these | Base64-encoded service account JSON (recommended on Railway; avoids quoting issues). |
-| `GMAIL_SERVICE_ACCOUNT_JSON` | One of these | Full JSON string of the service account key (minified one line for hosted envs). |
+| `GMAIL_SERVICE_ACCOUNT_JSON_PATH` | One of these | Path to the downloaded service account `.json` file (recommended for local dev). |
+| `GMAIL_SERVICE_ACCOUNT_JSON` | One of these | Full JSON string of the service account key (minified one line). |
+| `GMAIL_SERVICE_ACCOUNT_JSON_BASE64` | One of these | Base64-encoded JSON (recommended on Railway). Do **not** set this if you only have a plain JSON file. |
 | `GMAIL_SEND_AS_EMAIL` | Yes* | Default Workspace mailbox when a draft has no **From identity** (`lead_contact_emails.email_sending_identity_id` is null). Still required for Gmail push/watch unless you only use identities. |
 | Per-identity vars | When using `email_sending_identities` | Migration `145_email_sending_identities.sql` seeds two rows whose `send_as_env_key` values must be set on the server, e.g. `GMAIL_SEND_AS_TROUT_HOUSE` and `GMAIL_SEND_AS_PHILLY_AI`, each to the Workspace address to impersonate. Same service account must be allowed to impersonate every address you configure. |
 

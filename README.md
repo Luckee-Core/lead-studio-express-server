@@ -28,8 +28,7 @@ NEXT_PUBLIC_SERVER_URL=http://localhost:3032
 | `/api/data/*` | Lead CRM CRUD (leads, contacts, categories, email queue, scrape runs, call log, costs, saved filters, commercial research queue, …) |
 | `/api/services/*` | Lead research workers (Google search, website crawl, Facebook, auto-categorize, …) |
 | `/api/lead-contact-chat/*` | Contact chat drafts |
-| `/api/gmail-oauth/*` | Gmail send pipeline |
-| `/api/email/*`, `/api/webhooks/*`, `/api/cron/*` | Outbound email + SendGrid/Gmail hooks |
+| `/api/email/*`, `/api/webhooks/*`, `/api/cron/*` | Outbound email (Workspace service account) + SendGrid/Gmail hooks |
 | `/api/scrapers/facebook-*` | Facebook admin scrapers |
 
 ## Architecture

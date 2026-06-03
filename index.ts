@@ -44,9 +44,7 @@ import { createCronRouter } from './src/services/cron';
 app.use('/api/cron', createCronRouter());
 
 import { createLeadContactChatRouter } from './src/domains/lead-contact-chat/router';
-import { createGmailOauthRouter } from './src/domains/gmail-oauth/router';
 app.use('/api/lead-contact-chat', createLeadContactChatRouter());
-app.use('/api/gmail-oauth', createGmailOauthRouter());
 
 import { setupErrorHandling } from './src/services/middleware';
 setupErrorHandling(app);
