@@ -25,14 +25,19 @@ export const openTrackingHandler = async (req: Request, res: Response): Promise<
     return;
   }
 
+  console.log(`📥 Open tracking pixel hit (token ${token.slice(0, 8)}…)`);
+
   try {
     const supabase = getSupabaseClient();
     const record = await findLeadSentEmailByOpenTrackingToken(supabase, token);
 
     if (record) {
-      await recordLeadSentEmailOpen(supabase, record);
+      const result = await recordLeadSentEmailOpen(supabase, record);
+      console.log(
+        `📤 Open tracking recorded: sent_email=${record.id} first_open=${result.isFirstOpen} count=${result.openedCount}`
+      );
     } else {
-      console.log(`⚠️ Open tracking: unknown token ${token.slice(0, 8)}…`);
+      console.log(`⚠️ Open tracking: no lead_sent_emails row for token ${token.slice(0, 8)}…`);
     }
   } catch (error) {
     console.error('❌ Open tracking handler error:', error);

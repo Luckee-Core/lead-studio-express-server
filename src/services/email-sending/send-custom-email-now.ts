@@ -82,6 +82,11 @@ export const sendCustomEmailNow = async (
   );
 
   const openTrackingToken = createOpenTrackingTokenForSend();
+  if (openTrackingToken) {
+    console.log(`📬 Open tracking enabled for send (token ${openTrackingToken.slice(0, 8)}…)`);
+  } else {
+    console.log('📬 Open tracking disabled (EMAIL_OPEN_TRACKING_BASE_URL not set on this process)');
+  }
 
   const sgMessageId = await sendLeadEmail({
     to: contact.email,
