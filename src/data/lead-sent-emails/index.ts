@@ -17,3 +17,4 @@ export { plainBodiesFromSentEmailRows } from './plain-bodies-from-sent-rows';
 export type { SentEmailPlainBody } from './plain-bodies-from-sent-rows';
 export { listSentEmailsWithPlainBodiesForLeadContact } from './list-plain-bodies-for-lead-contact';
 export { countLeadSentEmailsForContact } from './count-lead-sent-emails-for-contact';
+export { deleteLeadSentEmail } from './delete';
