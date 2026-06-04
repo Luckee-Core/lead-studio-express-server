@@ -49,7 +49,7 @@ Optional (fallbacks for from address / name):
 1. Run `sql/lead_sent_emails_open_tracking_token.sql` in Supabase (adds `open_tracking_token` + unique index).
 2. Set `EMAIL_OPEN_TRACKING_BASE_URL` to this server’s **public HTTPS** URL (e.g. Railway URL or an ngrok tunnel in dev). Must be reachable by the recipient’s mail client — not `http://localhost` unless you tunnel.
 3. On each send (send-now, queue, bulk, legacy `/send`), when the base URL is set, express generates a token, stores it on `lead_sent_emails`, and appends a 1×1 `<img>` to the HTML part of the MIME message.
-4. When the email is opened, the client requests `GET {baseUrl}/api/email/open?t=<token>`. The handler updates `opened_at`, `opened_count`, and `delivery_status: opened` (unless bounced), and on the **first** open inserts a `lead_contact_opened` activity.
+4. When the email is opened, the client requests `GET {baseUrl}/api/email/open?t=<token>`. The handler updates `opened_at`, `opened_count`, and `delivery_status: opened` (unless bounced), and on the **first counted** open inserts a `lead_contact_opened` activity. The **first** pixel hit within **30 seconds** of `sent_at` is ignored (reduces Gmail/provider prefetch false positives).
 5. Response: transparent **GIF** by default. Set `EMAIL_OPEN_TRACKING_REDIRECT_URL` to return a 302 redirect instead (e.g. a logo URL).
 
 Verify:

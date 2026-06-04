@@ -33,9 +33,13 @@ export const openTrackingHandler = async (req: Request, res: Response): Promise<
 
     if (record) {
       const result = await recordLeadSentEmailOpen(supabase, record);
-      console.log(
-        `📤 Open tracking recorded: sent_email=${record.id} first_open=${result.isFirstOpen} count=${result.openedCount}`
-      );
+      if (result.ignoredPrefetch) {
+        console.log(`📤 Open tracking ignored (prefetch window): sent_email=${record.id}`);
+      } else {
+        console.log(
+          `📤 Open tracking recorded: sent_email=${record.id} first_open=${result.isFirstOpen} count=${result.openedCount}`
+        );
+      }
     } else {
       console.log(`⚠️ Open tracking: no lead_sent_emails row for token ${token.slice(0, 8)}…`);
     }

@@ -8,6 +8,7 @@ export type LeadSentEmailByOpenTokenRecord = {
   id: string;
   lead_contact_id: string;
   lead_email_id: string;
+  sent_at: string;
   opened_at: string | null;
   opened_count: number | null;
   delivery_status: string | null;
@@ -22,7 +23,7 @@ export const findLeadSentEmailByOpenTrackingToken = async (
 ): Promise<LeadSentEmailByOpenTokenRecord | null> => {
   const { data, error } = await supabase
     .from('lead_sent_emails')
-    .select('id, lead_contact_id, lead_email_id, opened_at, opened_count, delivery_status')
+    .select('id, lead_contact_id, lead_email_id, sent_at, opened_at, opened_count, delivery_status')
     .eq('open_tracking_token', token)
     .maybeSingle();
 
