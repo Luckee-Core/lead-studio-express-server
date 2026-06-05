@@ -19,7 +19,7 @@ ADRs document:
 4. [004 – Managed clients & startup init](./004-managed-clients-and-startup-init.md) — Initialize shared clients at startup.
 5. [005 – Edge functions & Railway boundaries](./005-edge-functions-railway-only.md) — Edge functions call Railway only.
 6. [006 – Logging & error response standards](./006-logging-and-error-response-standards.md) — Emoji logging and `{ success, error }` responses.
-9. [009 – `/api/data` action API & file vault](./009-crm-file-vault-api-data.md) — Action-style routes and JSON vault patterns.
+9. [009 – `/api/data` Supabase entity routers](./009-api-data-entity-routers.md) — Entity routers under `src/data/{entity}/router.ts`.
 10. [010 – Error log persistence](./010-error-log-persistence.md) — `thunk_errors`, `ui_errors`, `api_errors` tables.
 
 ## How to use

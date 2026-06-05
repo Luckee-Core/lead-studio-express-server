@@ -2,6 +2,10 @@
 
 Express API for [lead-studio-web-open-source](https://github.com/lead-open-source/lead-studio-web-open-source). Ported from the lead surface of `mentorai-server` (Luckee-only extras such as residential leads, lead digest, services studio, and user background studio are **not** included).
 
+**OSS quickstart (web + Express):** [`docs/oss-quickstart.md`](docs/oss-quickstart.md).
+
+OSS governance (benchmarks, release checklist, security audits): [mentorai-server `data/open-source/`](https://github.com/trouthouse-tech/mentorai-server/tree/main/data/open-source). Web + API wire contract: Lead Studio section in `oss-web-express-wire-contract.md`.
+
 ## Quick start
 
 ```bash
@@ -9,6 +13,8 @@ cp .env.example .env
 # Fill SUPABASE_URL, SUPABASE_SERVICE_KEY, ANTHROPIC_API_KEY, etc.
 
 npm install
+# Optional: URL discovery workers need Playwright browsers
+npm run playwright:install
 npm run dev
 ```
 
@@ -34,6 +40,18 @@ NEXT_PUBLIC_SERVER_URL=http://localhost:3032
 ## Architecture
 
 See [`.cursor/architecture/README.md`](.cursor/architecture/README.md) for ADRs (router factories, data layer, managed clients, edge-function boundaries).
+
+## Database
+
+Supabase setup and SQL run order: [`docs/database-setup.md`](docs/database-setup.md).
+
+## Local development and trust
+
+When `NODE_ENV` is not `production`, the server applies a **dev auth bypass** so local CRM flows work without login. **Do not** rely on this for LAN or internet exposure — add authentication and authorization before wider deploy. Bind to `127.0.0.1` or firewall the port during local development if unsure.
+
+## Security
+
+Report issues per [`SECURITY.md`](SECURITY.md). License: MIT — see [`LICENSE`](LICENSE). Release status: [`docs/oss-release-status.md`](docs/oss-release-status.md).
 
 ## Verification
 

@@ -52,5 +52,5 @@ BEFORE implementing ANY feature, you MUST:
 - Managed clients & startup init → `.cursor/architecture/004-managed-clients-and-startup-init.md`
 - Edge functions Railway-only → `.cursor/architecture/005-edge-functions-railway-only.md`
 - Logging & error response standards → `.cursor/architecture/006-logging-and-error-response-standards.md`
-- `/api/data` action API & file vault → `.cursor/architecture/009-crm-file-vault-api-data.md`
+- `/api/data` Supabase entity routers → `.cursor/architecture/009-api-data-entity-routers.md`
 - Error log persistence → `.cursor/architecture/010-error-log-persistence.md`
