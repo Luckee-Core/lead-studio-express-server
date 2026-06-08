@@ -58,7 +58,7 @@ export const sendLeadEmail = async (params: SendLeadEmailParams): Promise<string
     subject,
     body,
     fromName,
-    fromEmail = process.env.GMAIL_SEND_AS_EMAIL || process.env.SENDGRID_FROM_EMAIL || 'matt@trouthousetech.com',
+    fromEmail = process.env.GMAIL_SEND_AS_EMAIL || 'noreply@example.com',
     gmailUserEmail,
     attachments = [],
     openTrackingToken,

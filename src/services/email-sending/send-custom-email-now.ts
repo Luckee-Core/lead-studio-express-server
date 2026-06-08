@@ -1,6 +1,6 @@
 /**
  * Send a custom lead contact email immediately (not queued).
- * Fetches email content, attachments, sends via SendGrid, creates lead_sent_email record.
+ * Fetches email content, attachments, sends via Gmail API, creates lead_sent_email record.
  */
 
 import { SupabaseClient } from '@supabase/supabase-js';
@@ -62,7 +62,7 @@ export const sendCustomEmailNow = async (
 
   const attachments = await getAttachmentsByEmailId(supabase, leadContactEmailId);
 
-  const sgAttachments = await Promise.all(
+  const emailAttachments = await Promise.all(
     attachments.map(async (att) => {
       console.log(`📥 Downloading attachment: ${att.file_name} (${att.file_type}) from ${att.storage_path}`);
       const { data } = await downloadEmailAttachment(supabase, att.storage_path);
@@ -88,18 +88,18 @@ export const sendCustomEmailNow = async (
     console.log('📬 Open tracking disabled (EMAIL_OPEN_TRACKING_BASE_URL not set on this process)');
   }
 
-  const sgMessageId = await sendLeadEmail({
+  const gmailMessageId = await sendLeadEmail({
     to: contact.email,
     subject: emailResult.subject,
     body: emailResult.body,
     fromName: emailResult.fromName,
     fromEmail: resolvedSendAs.sendAsEmail,
     gmailUserEmail: resolvedSendAs.sendAsEmail,
-    attachments: sgAttachments.length > 0 ? sgAttachments : undefined,
+    attachments: emailAttachments.length > 0 ? emailAttachments : undefined,
     openTrackingToken,
   });
 
-  console.log(`💾 Creating lead_sent_email record with sg_message_id: ${sgMessageId}`);
+  console.log(`💾 Creating lead_sent_email record with Gmail message id: ${gmailMessageId}`);
 
   const sentEmail = await createLeadSentEmail(supabase, {
     lead_email_id: leadContactEmailId,
@@ -112,11 +112,11 @@ export const sendCustomEmailNow = async (
     from_name: emailResult.fromName,
     from_email: resolvedSendAs.sendAsEmail,
     email_sending_identity_id: resolvedSendAs.emailSendingIdentityId,
-    sg_message_id: sgMessageId,
+    sg_message_id: gmailMessageId,
     open_tracking_token: openTrackingToken,
   });
 
-  console.log(`✅ Created lead_sent_email record: ${sentEmail.id}, sg_message_id in DB: ${sentEmail.sg_message_id}`);
+  console.log(`✅ Created lead_sent_email record: ${sentEmail.id}, Gmail message id in DB: ${sentEmail.sg_message_id}`);
 
   if (contact.status === 'not_contacted') {
     await updateLeadContact(supabase, contact.id, { status: 'contacted' });

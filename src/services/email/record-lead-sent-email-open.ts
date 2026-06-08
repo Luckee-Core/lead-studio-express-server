@@ -1,5 +1,5 @@
 /**
- * Record an email open from the tracking pixel (mirrors SendGrid open webhook logic).
+ * Record an email open from the tracking pixel.
  */
 
 import { SupabaseClient } from '@supabase/supabase-js';

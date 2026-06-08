@@ -58,7 +58,7 @@ export const processCustomEmailQueueItem = async (
 
   const attachments = await getAttachmentsByEmailId(supabase, queueItem.lead_contact_email_id);
 
-  const sgAttachments = await Promise.all(
+  const emailAttachments = await Promise.all(
     attachments.map(async (att) => {
       const { data } = await downloadEmailAttachment(supabase, att.storage_path);
       const buffer = Buffer.isBuffer(data) ? data : Buffer.from(await data.arrayBuffer());
@@ -75,14 +75,14 @@ export const processCustomEmailQueueItem = async (
 
   const openTrackingToken = createOpenTrackingTokenForSend();
 
-  const sgMessageId = await sendLeadEmail({
+  const gmailMessageId = await sendLeadEmail({
     to: contact.email,
     subject: emailResult.subject,
     body: emailResult.body,
     fromName: emailResult.fromName,
     fromEmail: resolvedSendAs.sendAsEmail,
     gmailUserEmail: resolvedSendAs.sendAsEmail,
-    attachments: sgAttachments.length > 0 ? sgAttachments : undefined,
+    attachments: emailAttachments.length > 0 ? emailAttachments : undefined,
     openTrackingToken,
   });
 
@@ -97,7 +97,7 @@ export const processCustomEmailQueueItem = async (
     from_name: emailResult.fromName,
     from_email: resolvedSendAs.sendAsEmail,
     email_sending_identity_id: resolvedSendAs.emailSendingIdentityId,
-    sg_message_id: sgMessageId,
+    sg_message_id: gmailMessageId,
     open_tracking_token: openTrackingToken,
   });
 

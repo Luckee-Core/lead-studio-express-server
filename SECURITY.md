@@ -26,7 +26,7 @@ If private advisories are unavailable, edit this file and add a working addressâ
 
 - This document does not replace a professional security assessment for production or multi-tenant deployments.
 - **Service-role Supabase keys**, **Anthropic/OpenAI keys**, and **Gmail service account** material must stay server-only â€” never in client bundles or public env.
-- Optional integrations (Apify, SendGrid, webhooks) expand attack surface; disable or firewall routes you do not use.
+- Optional integrations (Apify, webhooks) expand attack surface; disable or firewall routes you do not use.
 
 ## Audit resources
 

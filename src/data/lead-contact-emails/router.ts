@@ -135,7 +135,7 @@ export const createLeadContactEmailsRouter = (): Router => {
 
       const openTrackingToken = createOpenTrackingTokenForSend();
 
-      const sgMessageId = await sendLeadEmail({
+      const gmailMessageId = await sendLeadEmail({
         to,
         subject,
         body,
@@ -149,7 +149,7 @@ export const createLeadContactEmailsRouter = (): Router => {
         status: 'sent',
         from_name: fromName,
         variation_id: variationId,
-        sg_message_id: sgMessageId,
+        sg_message_id: gmailMessageId,
         open_tracking_token: openTrackingToken,
       });
 

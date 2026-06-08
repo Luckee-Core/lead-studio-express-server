@@ -31,9 +31,8 @@ export const sendTestEmail = async (params: SendTestEmailParams): Promise<void> 
     message = 'This is a test email from lead-studio-express-server.',
   } = params;
 
-  const fromEmail =
-    process.env.GMAIL_SEND_AS_EMAIL || process.env.SENDGRID_FROM_EMAIL || 'noreply@example.com';
-  const fromName = process.env.SENDGRID_FROM_NAME?.trim() || 'Lead Studio';
+  const fromEmail = process.env.GMAIL_SEND_AS_EMAIL || 'noreply@example.com';
+  const fromName = process.env.GMAIL_FROM_NAME?.trim() || 'Lead Studio';
 
   const htmlMessage = `
     <html>

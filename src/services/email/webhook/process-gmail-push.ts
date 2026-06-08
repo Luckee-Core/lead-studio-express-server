@@ -6,7 +6,7 @@
 import type { gmail_v1 } from 'googleapis';
 import { getSupabaseClient } from '../../../db/supabase-client';
 import { getGmailWatchStateByEmail, upsertGmailWatchState } from '../../../data/gmail-watch-state';
-import { findLeadSentEmailBySgMessageId } from '../../../data/lead-sent-emails/find-by-sg-message-id';
+import { findLeadSentEmailByGmailMessageId } from '../../../data/lead-sent-emails/find-by-gmail-message-id';
 import { updateLeadContact } from '../../../data/lead-contacts';
 import { getGmailClient, decodeGmailNotification, listHistory } from '../gmail';
 
@@ -71,7 +71,7 @@ export const processGmailPushNotification = async (
         const messageIds = (thread.data.messages ?? []).map((m) => m.id).filter(Boolean) as string[];
 
         for (const mid of messageIds) {
-          const leadSent = await findLeadSentEmailBySgMessageId(supabase, mid);
+          const leadSent = await findLeadSentEmailByGmailMessageId(supabase, mid);
           if (leadSent) {
             processedThreadIds.add(threadId);
             await updateLeadContact(supabase, leadSent.lead_contact_id, { status: 'responded' });

@@ -1,6 +1,6 @@
 /**
- * Find Lead Sent Email By SendGrid Message ID
- * Supports exact match and partial match (webhook sends long form, we store short form).
+ * Find Lead Sent Email By Gmail Message ID
+ * Supports exact match and partial match when IDs differ in length.
  */
 
 import { SupabaseClient } from '@supabase/supabase-js';
@@ -15,17 +15,17 @@ export type LeadSentEmailRecord = {
 };
 
 /**
- * Find a lead_sent_emails row by sg_message_id.
- * Tries exact match first, then partial match (webhook ID starts with stored ID or vice versa).
+ * Find a lead_sent_emails row by Gmail message id (`sg_message_id` column).
+ * Tries exact match first, then partial match (stored ID contained in query or vice versa).
  */
-export const findLeadSentEmailBySgMessageId = async (
+export const findLeadSentEmailByGmailMessageId = async (
   supabase: SupabaseClient,
-  sgMessageId: string
+  gmailMessageId: string
 ): Promise<LeadSentEmailRecord | null> => {
   const { data: exact, error: exactError } = await supabase
     .from('lead_sent_emails')
     .select('id, lead_contact_id, sg_message_id, opened_at, opened_count, delivery_status')
-    .eq('sg_message_id', sgMessageId)
+    .eq('sg_message_id', gmailMessageId)
     .maybeSingle();
 
   if (!exactError && exact) {
@@ -44,7 +44,7 @@ export const findLeadSentEmailBySgMessageId = async (
   const matched = all.find((row) => {
     const stored = row.sg_message_id as string | null;
     if (!stored) return false;
-    return sgMessageId.includes(stored) || stored.includes(sgMessageId);
+    return gmailMessageId.includes(stored) || stored.includes(gmailMessageId);
   });
 
   return (matched as LeadSentEmailRecord) ?? null;

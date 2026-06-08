@@ -1,6 +1,6 @@
 # Email service (Gmail API)
 
-Outbound email is sent via **Gmail API** using a Google Cloud service account with **domain-wide delegation** (Google Workspace). SendGrid has been removed.
+Outbound email is sent via **Gmail API** using a Google Cloud service account with **domain-wide delegation** (Google Workspace).
 
 ## Environment variables
 
@@ -12,10 +12,9 @@ Outbound email is sent via **Gmail API** using a Google Cloud service account wi
 | `GMAIL_SEND_AS_EMAIL` | Yes* | Default Workspace mailbox when a draft has no **From identity** (`lead_contact_emails.email_sending_identity_id` is null). Still required for Gmail push/watch unless you only use identities. |
 | Per-identity vars | When using `email_sending_identities` | Migration `145_email_sending_identities.sql` seeds two rows whose `send_as_env_key` values must be set on the server, e.g. `GMAIL_SEND_AS_TROUT_HOUSE` and `GMAIL_SEND_AS_PHILLY_AI`, each to the Workspace address to impersonate. Same service account must be allowed to impersonate every address you configure. |
 
-Optional (fallbacks for from address / name):
+Optional:
 
-- `SENDGRID_FROM_EMAIL` – fallback default from address if `GMAIL_SEND_AS_EMAIL` is not set.
-- `SENDGRID_FROM_NAME` – default “From” display name for test emails.
+- `GMAIL_FROM_NAME` – default “From” display name for test emails (default: `Lead Studio`).
 
 ## Google Workspace setup
 
@@ -42,9 +41,7 @@ Optional (fallbacks for from address / name):
 4. **Env**: Optional `GMAIL_PUBSUB_TOPIC` (default `projects/tht-web-e2134/topics/gmail-push`).
 5. Call `POST /api/cron/renew-gmail-watch` once to start the watch, then schedule it daily.
 
-- The **SendGrid webhook** (`POST /api/webhooks/webhook`) can still update `opened_at` for legacy SendGrid sends. **Gmail API sends do not use SendGrid** — open tracking for those uses the pixel below.
-
-## Open tracking pixel (Gmail sends)
+## Open tracking pixel
 
 1. Run `sql/lead_sent_emails_open_tracking_token.sql` in Supabase (adds `open_tracking_token` + unique index).
 2. Set `EMAIL_OPEN_TRACKING_BASE_URL` to this server’s **public HTTPS** URL (e.g. Railway URL or an ngrok tunnel in dev). Must be reachable by the recipient’s mail client — not `http://localhost` unless you tunnel.

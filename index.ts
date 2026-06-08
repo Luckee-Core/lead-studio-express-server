@@ -36,8 +36,7 @@ app.use('/api/scrapers/facebook-posts', createFacebookPostsScraperRouter());
 import { createEmailRouter } from './src/services/email';
 app.use('/api/email', createEmailRouter());
 
-import { createSendGridWebhookRouter, createGmailPushRouter } from './src/services/email/webhook';
-app.use('/api/webhooks', createSendGridWebhookRouter());
+import { createGmailPushRouter } from './src/services/email/webhook';
 app.use('/api/webhooks', createGmailPushRouter());
 
 import { createCronRouter } from './src/services/cron';

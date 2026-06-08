@@ -18,6 +18,7 @@ export interface CreateLeadSentEmailInput {
   from_email?: string | null;
   email_sending_identity_id?: string | null;
   variation_id?: number | null;
+  /** Gmail API message id (stored in `sg_message_id` column). */
   sg_message_id?: string | null;
   open_tracking_token?: string | null;
 }

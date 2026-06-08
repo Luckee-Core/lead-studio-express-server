@@ -60,7 +60,7 @@ export const sendBulkLeadContactEmails = async (
 
       const openTrackingToken = createOpenTrackingTokenForSend();
 
-      const sgMessageId = await sendLeadEmail({
+      const gmailMessageId = await sendLeadEmail({
         to: contact.email,
         subject,
         body,
@@ -74,7 +74,7 @@ export const sendBulkLeadContactEmails = async (
         status: 'sent',
         from_name: fromName,
         variation_id: variationId,
-        sg_message_id: sgMessageId,
+        sg_message_id: gmailMessageId,
         open_tracking_token: openTrackingToken,
       });
 
