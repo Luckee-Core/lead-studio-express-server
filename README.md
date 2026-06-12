@@ -20,6 +20,8 @@ npm run dev
 
 Default port: **3032** (matches OSS web `NEXT_PUBLIC_SERVER_URL` dev default).
 
+Mac users can start both repos from the web repo's Desktop launcher — see [`lead-studio-web-open-source/scripts/README.md`](https://github.com/lead-open-source/lead-studio-web-open-source/blob/main/scripts/README.md).
+
 Point the web app at this server:
 
 ```env
