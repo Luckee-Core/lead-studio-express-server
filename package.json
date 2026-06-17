@@ -2,9 +2,9 @@
   "name": "lead-studio-express-server",
   "version": "1.0.0",
   "description": "Lead Studio OSS — Express API for lead-studio-web",
-  "main": "index.ts",
+  "main": "dist/index.js",
   "scripts": {
-    "start": "ts-node index.ts",
+    "start": "node dist/index.js",
     "dev": "nodemon --exec ts-node index.ts",
     "build": "tsc",
     "build:watch": "tsc --watch",

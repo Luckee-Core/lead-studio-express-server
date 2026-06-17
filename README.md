@@ -59,7 +59,17 @@ Report issues per [`SECURITY.md`](SECURITY.md). License: MIT — see [`LICENSE`]
 
 ```bash
 npm run build
+npm start
 curl http://localhost:3032/api/health
 ```
+
+## Railway deploy
+
+Railway runs `npm run build` then `npm start`. **Do not** use `ts-node` in production — it compiles TypeScript at boot and often OOMs on small instances (`JavaScript heap out of memory`).
+
+- **Build command:** `npm run build` (default when a `build` script exists)
+- **Start command:** `npm start` → `node dist/index.js`
+- Set `EMAIL_OPEN_TRACKING_BASE_URL` to your Railway public URL (e.g. `https://your-service.up.railway.app`)
+- Optional Playwright workers: add a build step or one-off `npx playwright install chromium` if you use URL discovery on Railway
 
 Smoke with OSS web: leads list, find leads (maps scrape), lead detail research actions, email queue, commercial research queue, saved filter presets.
