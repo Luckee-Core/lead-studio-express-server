@@ -13,13 +13,12 @@ export const createLeadSentEmailsRouter = (): Router => {
 
   /**
    * GET /api/data/lead-sent-emails
-   * Retrieves all lead sent emails (enriched with lead_id from lead_contacts).
+   * Retrieves all lead sent emails.
    */
   router.get('/', async (req: Request, res: Response): Promise<void> => {
     try {
       const supabase = req.supabase;
-      const includeOfferings = req.query.include_offerings === 'true';
-      const sentEmails = await getAllLeadSentEmails(supabase, { includeOfferings });
+      const sentEmails = await getAllLeadSentEmails(supabase);
 
       res.status(200).json({
         success: true,
