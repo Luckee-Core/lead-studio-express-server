@@ -2,7 +2,7 @@ import type { Request, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import { getSupabaseClient } from '../../db/supabase-client';
 import { getLeadById } from '../../data/leads/get-by-id';
-import { listOfferedServicesForUser } from '../../data/offered-service/list-for-user';
+import { listColdEmailOfferingsForUser } from '../../data/cold-email-offering/list-for-user';
 import {
   insertLeadOpportunityDictationExchange,
   insertLeadOpportunityDictationRequest,
@@ -177,7 +177,7 @@ export const runLeadOpportunityDictationAnalysis = async (
       content: notes,
     });
 
-    const offeredServices = await listOfferedServicesForUser(supabase, userId);
+    const offeredServices = await listColdEmailOfferingsForUser(supabase, userId);
     const ai = await processSummarizeOpportunityDictation(anthropic, {
       businessName: lead.business_name,
       address: lead.address ?? null,
@@ -247,7 +247,7 @@ export const runLeadOpportunityDictationAnalysis = async (
           description: s.description,
           reason: s.reason,
           matchType: s.matchType,
-          linkedOfferedServiceIds: s.matchedServiceIds,
+          linkedColdEmailOfferingIds: s.matchedServiceIds,
         }))
       );
     }

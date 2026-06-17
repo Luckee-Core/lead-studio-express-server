@@ -18,6 +18,7 @@ import { createGoogleMapsScrapeRunsRouter } from './google-maps-scrape-runs/rout
 import { createToCallLogRouter } from './to-call-log';
 import { createCommercialLeadResearchQueueRouter } from './commercial-lead-research-queue/router';
 import { createSavedFiltersRouter } from './saved-filters/router';
+import { createColdEmailOfferingsRouter } from './cold-email-offering';
 
 /**
  * Lead Studio data layer — CRUD routers for OSS lead-studio-web.
@@ -44,6 +45,7 @@ export const createLeadStudioDataService = (): Router => {
   router.use('/to-call-log', createToCallLogRouter());
   router.use('/commercial-lead-research-queue', createCommercialLeadResearchQueueRouter());
   router.use('/saved-filters', createSavedFiltersRouter());
+  router.use('/cold-email-offerings', createColdEmailOfferingsRouter());
 
   return router;
 };

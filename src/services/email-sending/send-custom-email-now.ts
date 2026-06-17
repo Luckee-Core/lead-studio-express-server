@@ -7,6 +7,7 @@ import { SupabaseClient } from '@supabase/supabase-js';
 import { getLeadContactEmailById } from '../../data/lead-contact-emails';
 import { getLeadContactById, updateLeadContact } from '../../data/lead-contacts';
 import { createLeadSentEmail } from '../../data/lead-sent-emails';
+import { createLeadSentEmailColdEmailOffering } from '../../data/lead-sent-email-cold-email-offering';
 import { getAttachmentsByEmailId } from '../../data/lead-contact-email-attachments';
 import { generateCustomEmail } from '../email-generation';
 import { sendLeadEmail } from '../email/send-lead-email';
@@ -117,6 +118,13 @@ export const sendCustomEmailNow = async (
   });
 
   console.log(`✅ Created lead_sent_email record: ${sentEmail.id}, Gmail message id in DB: ${sentEmail.sg_message_id}`);
+
+  if (email.cold_email_offering_id) {
+    await createLeadSentEmailColdEmailOffering(supabase, {
+      leadSentEmailId: sentEmail.id,
+      coldEmailOfferingId: email.cold_email_offering_id,
+    });
+  }
 
   if (contact.status === 'not_contacted') {
     await updateLeadContact(supabase, contact.id, { status: 'contacted' });

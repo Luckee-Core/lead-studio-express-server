@@ -11,6 +11,7 @@ export interface UpdateLeadContactEmailInput {
   body?: Record<string, any>;
   campaign_ids?: string[];
   email_sending_identity_id?: string | null;
+  cold_email_offering_id?: string | null;
 }
 
 export const updateLeadContactEmail = async (

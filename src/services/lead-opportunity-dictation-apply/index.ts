@@ -5,9 +5,9 @@ import {
   getLeadOpportunityDictationRequestById,
   getLeadOpportunityDictationResponseById,
 } from '../../data/lead-opportunity-dictation';
-import { updateLeadOpportunitySuggestionAfterServiceCreated } from '../../data/lead-opportunity-suggestions';
-import { createOfferedService } from '../../data/offered-service/create';
-import { listOfferedServicesForUser } from '../../data/offered-service/list-for-user';
+import { updateLeadOpportunitySuggestionAfterOfferingCreated } from '../../data/lead-opportunity-suggestions';
+import { createColdEmailOffering } from '../../data/cold-email-offering/create';
+import { listColdEmailOfferingsForUser } from '../../data/cold-email-offering/list-for-user';
 import { verifyCronSecret } from '../lead-research-shared';
 
 type SuggestionRow = {
@@ -100,20 +100,21 @@ export const runLeadOpportunityDictationApply = async (
     );
 
     if (selected.length === 0) {
-      res.status(200).json({ success: true, createdServices: [] });
+      res.status(200).json({ success: true, createdOfferings: [] });
       return;
     }
 
-    const existing = await listOfferedServicesForUser(supabase, requestRow.user_id);
+    const existing = await listColdEmailOfferingsForUser(supabase, requestRow.user_id);
     const existingByTitle = new Set(existing.map((service) => normalize(service.title)));
     let nextSortOrder = existing.reduce(
       (max, service) => Math.max(max, service.sort_order),
       0
     );
 
-    const createdServices: {
+    const createdOfferings: {
       id: string;
       title: string;
+      hook: string;
       description: string;
       sortOrder: number;
       createdAt: string;
@@ -127,33 +128,36 @@ export const runLeadOpportunityDictationApply = async (
       }
 
       nextSortOrder += 1;
-      const created = await createOfferedService(supabase, {
+      const created = await createColdEmailOffering(supabase, {
         id: uuidv4(),
         userId: requestRow.user_id,
         title: item.title.trim(),
+        hook: item.title.trim(),
         description: item.description.trim(),
         sortOrder: nextSortOrder,
       });
       existingByTitle.add(normalizedTitle);
-      createdServices.push({
+      createdOfferings.push({
         id: created.id,
         title: created.title,
+        hook: created.hook,
         description: created.description,
         sortOrder: created.sort_order,
         createdAt: created.created_at,
         updatedAt: created.updated_at,
       });
 
-      await updateLeadOpportunitySuggestionAfterServiceCreated(supabase, {
+      await updateLeadOpportunitySuggestionAfterOfferingCreated(supabase, {
         dictationRequestId: requestId,
         sourceSuggestionId: item.id,
-        offeredServiceId: created.id,
+        coldEmailOfferingId: created.id,
       });
     }
 
     res.status(200).json({
       success: true,
-      createdServices,
+      createdOfferings,
+      createdServices: createdOfferings,
     });
   } catch (error: unknown) {
     const err = error instanceof Error ? error : new Error(String(error));

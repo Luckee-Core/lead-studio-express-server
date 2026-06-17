@@ -1,21 +1,21 @@
 import { SupabaseClient } from '@supabase/supabase-js';
 
 /**
- * Delete an offered service (caller must verify ownership).
+ * Delete a cold email offering (caller must verify ownership).
  */
-export const deleteOfferedService = async (
+export const deleteColdEmailOffering = async (
   supabase: SupabaseClient,
-  serviceId: string,
+  offeringId: string,
   userId: string,
 ): Promise<void> => {
   const { error } = await supabase
-    .from('offered_service')
+    .from('cold_email_offering')
     .delete()
-    .eq('id', serviceId)
+    .eq('id', offeringId)
     .eq('user_id', userId);
 
   if (error) {
-    console.error('❌ deleteOfferedService:', error);
+    console.error('❌ deleteColdEmailOffering:', error);
     throw new Error(error.message);
   }
 };

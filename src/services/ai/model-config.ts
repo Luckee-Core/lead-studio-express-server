@@ -90,10 +90,10 @@ const CONFIGS: Record<string, ModelConfig> = {
     temperature: 0.28,
     maxTokens: 520,
   },
-  services_studio: {
+  cold_email_offering_generate: {
     model: HAIKU,
     temperature: 0.45,
-    maxTokens: 4096,
+    maxTokens: 1024,
   },
   email_persona_studio: {
     model: HAIKU,

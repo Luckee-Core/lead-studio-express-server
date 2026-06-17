@@ -11,9 +11,9 @@ export type LeadOpportunitySuggestionRow = {
   description: string;
   reason: string;
   match_type: 'existing' | 'new';
-  linked_offered_service_ids: unknown;
+  linked_cold_email_offering_ids: unknown;
   decision: 'pending' | 'accepted' | 'dismissed';
-  created_offered_service_id: string | null;
+  created_cold_email_offering_id: string | null;
   created_at: string;
   updated_at: string;
 };

@@ -42,9 +42,11 @@ export const getLeadOpportunitySuggestions = async (
       description: row.description,
       reason: row.reason,
       matchType: row.match_type,
-      linkedOfferedServiceIds: asStringArray(row.linked_offered_service_ids),
+      linkedColdEmailOfferingIds: asStringArray(row.linked_cold_email_offering_ids),
       decision: row.decision,
-      createdOfferedServiceId: row.created_offered_service_id,
+      createdColdEmailOfferingId: row.created_cold_email_offering_id,
+      linkedOfferedServiceIds: asStringArray(row.linked_cold_email_offering_ids),
+      createdOfferedServiceId: row.created_cold_email_offering_id,
       createdAt: row.created_at,
     }));
 

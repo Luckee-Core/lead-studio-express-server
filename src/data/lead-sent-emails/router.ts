@@ -18,7 +18,8 @@ export const createLeadSentEmailsRouter = (): Router => {
   router.get('/', async (req: Request, res: Response): Promise<void> => {
     try {
       const supabase = req.supabase;
-      const sentEmails = await getAllLeadSentEmails(supabase);
+      const includeOfferings = req.query.include_offerings === 'true';
+      const sentEmails = await getAllLeadSentEmails(supabase, { includeOfferings });
 
       res.status(200).json({
         success: true,

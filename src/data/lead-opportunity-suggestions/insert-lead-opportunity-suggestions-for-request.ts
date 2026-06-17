@@ -11,7 +11,7 @@ export type LeadOpportunitySuggestionInsertRow = {
   description: string;
   reason: string;
   matchType: 'existing' | 'new';
-  linkedOfferedServiceIds: string[];
+  linkedColdEmailOfferingIds: string[];
 };
 
 /**
@@ -37,7 +37,7 @@ export const insertLeadOpportunitySuggestionsForRequest = async (
     description: row.description,
     reason: row.reason,
     match_type: row.matchType,
-    linked_offered_service_ids: row.linkedOfferedServiceIds,
+    linked_cold_email_offering_ids: row.linkedColdEmailOfferingIds,
     decision: 'pending',
     created_at: now,
     updated_at: now,

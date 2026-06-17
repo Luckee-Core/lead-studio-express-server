@@ -31,6 +31,7 @@ Run these scripts in the Supabase **SQL Editor** on a **new** project (empty `pu
 | 23 | [`migrations/129_create_lead_contact_email_draft_ai_audit_tables.sql`](migrations/129_create_lead_contact_email_draft_ai_audit_tables.sql) | Email draft AI audit |
 | 24 | [`migrations/132_create_saved_filters.sql`](migrations/132_create_saved_filters.sql) | Saved filters |
 | 25 | [`migrations/145_email_sending_identities.sql`](migrations/145_email_sending_identities.sql) | Sending identities + column alters |
+| 26 | [`migrations/146_cold_email_offerings.sql`](migrations/146_cold_email_offerings.sql) | Cold email offerings + sent-email junction (replaces `offered_service`) |
 
 ## Optional (extra features)
 
@@ -39,7 +40,7 @@ Run these scripts in the Supabase **SQL Editor** on a **new** project (empty `pu
 | [`migrations/106_create_lead_dictation_notes_ai_audit_tables.sql`](migrations/106_create_lead_dictation_notes_ai_audit_tables.sql) | Dictation notes research |
 | [`migrations/108_create_lead_opportunity_dictation_ai_tables.sql`](migrations/108_create_lead_opportunity_dictation_ai_tables.sql) | Opportunity dictation |
 | [`migrations/109_create_lead_opportunity_suggestions.sql`](migrations/109_create_lead_opportunity_suggestions.sql) | Opportunity suggestions |
-| [`migrations/101_offered_service_and_services_studio_chat.sql`](migrations/101_offered_service_and_services_studio_chat.sql) | Offered services |
+| [`migrations/146_cold_email_offerings.sql`](migrations/146_cold_email_offerings.sql) | Cold email offerings (run after 101 if upgrading) |
 | [`migrations/113_add_in_call_log_statuses.sql`](migrations/113_add_in_call_log_statuses.sql) | Extra to-call statuses |
 | [`lead_sent_emails_open_tracking_token.sql`](lead_sent_emails_open_tracking_token.sql) | Email open pixels |
 

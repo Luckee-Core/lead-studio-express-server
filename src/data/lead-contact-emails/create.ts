@@ -14,6 +14,7 @@ export interface CreateLeadContactEmailInput {
   campaign_ids?: string[];
   variation_id?: number;
   email_sending_identity_id?: string | null;
+  cold_email_offering_id?: string | null;
 }
 
 export const createLeadContactEmail = async (
@@ -27,6 +28,7 @@ export const createLeadContactEmail = async (
       campaign_ids: input.campaign_ids ?? [],
       variation_id: input.variation_id ?? null,
       email_sending_identity_id: input.email_sending_identity_id ?? null,
+      cold_email_offering_id: input.cold_email_offering_id ?? null,
     })
     .select()
     .single();

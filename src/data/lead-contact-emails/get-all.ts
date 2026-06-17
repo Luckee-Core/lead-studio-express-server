@@ -16,4 +16,5 @@ export interface LeadContactEmail {
   updated_at: string;
   variation_id?: number | null;
   email_sending_identity_id?: string | null;
+  cold_email_offering_id?: string | null;
 }

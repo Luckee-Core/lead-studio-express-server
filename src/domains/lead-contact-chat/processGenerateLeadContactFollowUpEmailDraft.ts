@@ -6,7 +6,7 @@ import {
   countLeadSentEmailsForContact,
   listSentEmailsWithPlainBodiesForLeadContact,
 } from '../../data/lead-sent-emails';
-import { listOfferedServicesForUser } from '../../data/offered-service/list-for-user';
+import { listColdEmailOfferingsForUser } from '../../data/cold-email-offering/list-for-user';
 import {
   buildLeadContactFollowUpEmailDraftSystemPrompt,
   buildLeadContactFollowUpEmailDraftUserPayload,
@@ -55,9 +55,10 @@ export const processGenerateLeadContactFollowUpEmailDraft = async (
     );
   }
 
-  const offeredServiceRows = await listOfferedServicesForUser(supabase, userId);
-  const offeredServices = offeredServiceRows.map((row) => ({
-    title: row.title?.trim() || 'Untitled service',
+  const offeringRows = await listColdEmailOfferingsForUser(supabase, userId);
+  const offeredServices = offeringRows.map((row) => ({
+    title: row.title?.trim() || 'Untitled offering',
+    hook: (row.hook ?? '').trim(),
     description: (row.description ?? '').trim(),
   }));
 

@@ -8,6 +8,7 @@ import type { LeadContactEmailQueue } from '../../../data/lead-contact-email-que
 import { getLeadContactById, updateLeadContact } from '../../../data/lead-contacts';
 import { getLeadContactEmailById } from '../../../data/lead-contact-emails';
 import { createLeadSentEmail } from '../../../data/lead-sent-emails';
+import { createLeadSentEmailColdEmailOffering } from '../../../data/lead-sent-email-cold-email-offering';
 import { getAttachmentsByEmailId } from '../../../data/lead-contact-email-attachments';
 import { resolveSendAsForLeadContactSend } from '../../../utils/email/resolve-send-as-for-lead-contact-send';
 import { generateCustomEmail } from '../../email-generation';
@@ -86,7 +87,7 @@ export const processCustomEmailQueueItem = async (
     openTrackingToken,
   });
 
-  await createLeadSentEmail(supabase, {
+  const sentEmail = await createLeadSentEmail(supabase, {
     lead_email_id: emailResult.leadContactEmailId,
     lead_contact_id: queueItem.lead_contact_id,
     persona_id: queueItem.persona_id ?? null,
@@ -100,6 +101,14 @@ export const processCustomEmailQueueItem = async (
     sg_message_id: gmailMessageId,
     open_tracking_token: openTrackingToken,
   });
+
+  const draftEmail = await getLeadContactEmailById(supabase, emailResult.leadContactEmailId);
+  if (draftEmail?.cold_email_offering_id) {
+    await createLeadSentEmailColdEmailOffering(supabase, {
+      leadSentEmailId: sentEmail.id,
+      coldEmailOfferingId: draftEmail.cold_email_offering_id,
+    });
+  }
 
   if (contact.status === 'not_contacted') {
     await updateLeadContact(supabase, contact.id, { status: 'contacted' });

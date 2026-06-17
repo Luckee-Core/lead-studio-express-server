@@ -2,7 +2,7 @@ import Anthropic from '@anthropic-ai/sdk';
 import { SupabaseClient } from '@supabase/supabase-js';
 import { getLeadContactById } from '../../data/lead-contacts/get-by-id';
 import { getLeadById } from '../../data/leads/get-by-id';
-import { listOfferedServicesForUser } from '../../data/offered-service/list-for-user';
+import { listColdEmailOfferingsForUser } from '../../data/cold-email-offering/list-for-user';
 import {
   buildLeadContactEmailDraftSystemPrompt,
   buildLeadContactEmailDraftUserPayload,
@@ -33,9 +33,10 @@ export const processGenerateLeadContactIntroEmailDraft = async (
     throw new Error('Lead not found for contact');
   }
 
-  const offeredServiceRows = await listOfferedServicesForUser(supabase, userId);
-  const offeredServices = offeredServiceRows.map((row) => ({
-    title: row.title?.trim() || 'Untitled service',
+  const offeringRows = await listColdEmailOfferingsForUser(supabase, userId);
+  const offeredServices = offeringRows.map((row) => ({
+    title: row.title?.trim() || 'Untitled offering',
+    hook: (row.hook ?? '').trim(),
     description: (row.description ?? '').trim(),
   }));
 

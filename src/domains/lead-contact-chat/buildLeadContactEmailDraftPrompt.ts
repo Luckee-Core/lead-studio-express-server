@@ -48,29 +48,36 @@ const formatLeadResearchContext = (lead: Lead): string => {
   return parts.length > 0 ? parts.join('\n\n') : '(No description or summary on file.)';
 };
 
-export type OfferedServicePromptLine = {
+export type ColdEmailOfferingPromptLine = {
   title: string;
+  hook: string;
   description: string;
 };
 
-const formatServicesStudioCatalog = (services: OfferedServicePromptLine[]): string => {
-  if (services.length === 0) {
-    return '(No services in Services Studio yet. Do not invent specific offerings; keep any help line generic or minimal.)';
+/** @deprecated Use ColdEmailOfferingPromptLine */
+export type OfferedServicePromptLine = ColdEmailOfferingPromptLine;
+
+const formatColdEmailOfferingCatalog = (offerings: ColdEmailOfferingPromptLine[]): string => {
+  if (offerings.length === 0) {
+    return '(No cold email offerings yet. Do not invent specific offerings; keep any help line generic or minimal.)';
   }
-  return services
+  return offerings
     .map((s, i) => {
+      const hook = s.hook.trim() ? `\n  Hook: ${s.hook.trim()}` : '';
       const desc = s.description.trim() ? `\n  ${s.description.trim()}` : '';
-      return `${i + 1}. **${s.title}**${desc}`;
+      return `${i + 1}. **${s.title}**${hook}${desc}`;
     })
     .join('\n\n');
 };
 
-/** True if any service title/description signals AI, software, automation, or training (for draft breadth rules). */
-const catalogHasAiSoftwareTrainingDimension = (services: OfferedServicePromptLine[]): boolean => {
+const formatServicesStudioCatalog = formatColdEmailOfferingCatalog;
+
+/** True if any offering title/description signals AI, software, automation, or training (for draft breadth rules). */
+const catalogHasAiSoftwareTrainingDimension = (offerings: ColdEmailOfferingPromptLine[]): boolean => {
   const re =
     /\bAI\b|artificial intelligence|SaaS|saas|software|automation|workshop|workshops|\btraining\b/i;
-  for (const s of services) {
-    if (re.test(`${s.title}\n${s.description}`)) {
+  for (const s of offerings) {
+    if (re.test(`${s.title}\n${s.hook}\n${s.description}`)) {
       return true;
     }
   }
@@ -80,8 +87,8 @@ const catalogHasAiSoftwareTrainingDimension = (services: OfferedServicePromptLin
 /**
  * When the catalog includes AI/software/training, require the model to reflect that in the body (not only lead-gen lines).
  */
-const formatCatalogBreadthBlock = (services: OfferedServicePromptLine[]): string => {
-  if (!catalogHasAiSoftwareTrainingDimension(services)) {
+const formatCatalogBreadthBlock = (offerings: ColdEmailOfferingPromptLine[]): string => {
+  if (!catalogHasAiSoftwareTrainingDimension(offerings)) {
     return '';
   }
   return `
@@ -164,7 +171,7 @@ Write in **first person** to the contact. Never write as if you are their busine
 ## Precedence
 1) User message **MANDATORY OPENING** / **MANDATORY SIGN-OFF**: copy **exactly**; body starts with that first line, then blank line; ends with blank line then sign-off; nothing after sign-off.
 2) **Email persona** (Voice, Do, Don't, CTA, Hook styles): binding for tone, structure, fixed phrases.
-3) **Services Studio catalog** in the user message defines **what you may claim**. If persona **Service / offer** conflicts with catalog **facts**, prefer **catalog**; still honor greeting and sign-off.
+3) **Cold email offerings catalog** in the user message defines **what you may claim**. If persona **Service / offer** conflicts with catalog **facts**, prefer **catalog**; still honor greeting and sign-off.
 
 ## Shape (hello + what you do, not a plan)
 After mandatory opening + blank line: optional one neutral line (business name / on your radar) or **one** sentence only if **Short description** or **Research narrative** has a **concrete** fact in normal prose. Then **exactly one sentence** for what **you** do (catalog; one comma or "and" inside is OK). Include a **short** clause that **time and bandwidth are always tight** for owners in general (respect, not claiming *their* shop is slow or underwater). Then **one** close: **short call**, **minimal time**. **No** "we should", "let's fix", "here's what I'd suggest", "worth exploring" as homework for them. **No** "few/couple questions" or "see if there's a fit" interview framing. **No** second pitch sentence or bullet list in the body. About **2 to 4** short sentences after the opening block, **under ~85 words** with sign-off if present.
@@ -191,7 +198,7 @@ export type LeadContactEmailDraftContextParams = {
   contactEmail: string | null;
   chatTranscript: string;
   emailPersona: Record<string, string>;
-  offeredServices: OfferedServicePromptLine[];
+  offeredServices: ColdEmailOfferingPromptLine[];
 };
 
 const INTRO_USER_MESSAGE_CHECKLIST = `**Checklist:** Follow the **system** rules (including **Zero-tolerance**). If **MANDATORY OPENING** / **MANDATORY SIGN-OFF** appear above, obey them exactly. **One** catalog sentence for what you do; if **Required catalog breadth** appears above, include AI/software/automation/training **in that sentence**. Facts about **them** only from **Short description** or **Research narrative** prose, not JSON/highlights. **Do not** mention booking calendars, online booking, scheduling, slots, or site checks unless that exact detail is in that prose. **Do not** say **24/7 emergency shop** or similar unless it's in that prose. No em/en dash. Do not start two sentences in a row with the word **I**. Close with a **short call**, not questions or fit-interview framing.`;
@@ -222,8 +229,8 @@ ${formatMandatoryOpeningBlock(mandatoryOpening)}
 ## Lead research / at a glance
 ${formatLeadResearchContext(lead)}
 
-## Your Services Studio catalog (use these offerings only; do not invent services beyond this list)
-${formatServicesStudioCatalog(offeredServices)}${formatCatalogBreadthBlock(offeredServices)}
+## Your cold email offerings catalog (use these offerings only; do not invent services beyond this list)
+${formatColdEmailOfferingCatalog(offeredServices)}${formatCatalogBreadthBlock(offeredServices)}
 ## Recipient contact
 Name: ${contactName}
 Role: ${contactRole ?? '-'}
